@@ -4,7 +4,7 @@
 <!--
    A demo of lighting and hierarchical modeling using WebGL.
 
-   Emissive color is used to make the lights seem to glow yellow when
+   Emissive color is used to make the lights seem to glow red when
    they are turned on.
 
    Derived from code available from Diskworld-2.html
@@ -124,7 +124,7 @@ Notice the light only has 3 properties now -->
     var gl;   // The webgl context.
 
     var overheadLightOn = true; // turns overhead light on/off
-    var yellowLampOn = true; // turns yellow lamp on/off
+    var redLampOn = true; // turns red lamp on/off
     var cyanLampOn = true; // turns cyan lamp on/off
 
     var a_coords_loc;         // Location of the a_coords attribute variable in the shader program.
@@ -178,13 +178,13 @@ Notice the light only has 3 properties now -->
 
     function lights() {
 
-        // yellow lamp light
-        if (yellowLampOn) {
+        // red lamp light
+        if (redLampOn) {
             gl.uniform1i(u_lights[0].enabled, 1);
         } else {
             gl.uniform1i(u_lights[0].enabled, 0);
         }
-        gl.uniform3f(u_lights[0].color, 0.6, 0.6, 0.1);
+        gl.uniform3f(u_lights[0].color, 0.7, 0.1, 0.1);
         gl.uniform1f(u_lights[0].attenuation, 2);
 
         // cyan lamp light
@@ -193,27 +193,27 @@ Notice the light only has 3 properties now -->
         } else {
             gl.uniform1i(u_lights[1].enabled, 0);
         }
-        gl.uniform3f(u_lights[1].color, 0.1, 0.6, 0.6);
+        gl.uniform3f(u_lights[1].color, 0.1, 0.7, 0.7);
         gl.uniform1f(u_lights[1].attenuation, 2);
 
         // overhead light
+        gl.uniform1i(u_lights[2].enabled, 1);
         if (overheadLightOn) {
-            gl.uniform1i(u_lights[2].enabled, 1);
-        } else {
-            gl.uniform1i(u_lights[2].enabled, 0);
+            gl.uniform3f(u_lights[2].color, 0.3, 0.3, 0.3);
+        } else { // dim light on even if the checkbox is unchecked
+            gl.uniform3f(u_lights[2].color, 0.1, 0.1, 0.1);
         }
-        gl.uniform3f(u_lights[2].color, 0.4, 0.4, 0.4);
         gl.uniform1f(u_lights[2].attenuation, 0);
 
         currentColor = [0.3, 0.3, 0.3, 1];
 
-        // draw yellow lamp light
+        // draw red lamp light
         pushMatrix();
-        mat4.translate(modelview, modelview, [-3, 1.4, 0]);
+        mat4.translate(modelview, modelview, [-1.2, 1.4, 0]);
         mat4.scale(modelview, modelview, [0.15, 0.15, 0.15]);
         setLightPosition(u_lights[0].position, modelview, [0, 0, 0, 1]);
-        if (yellowLampOn) {
-            gl.uniform3f(u_material.emissiveColor, 0.6, 0.6, 0.1);
+        if (redLampOn) {
+            gl.uniform3f(u_material.emissiveColor, 0.7, 0.1, 0.1);
         } else {
             gl.uniform3f(u_material.emissiveColor, 0.2, 0.2, 0.2);      
         }
@@ -223,11 +223,11 @@ Notice the light only has 3 properties now -->
 
         // draw cyan lamp light
         pushMatrix();
-        mat4.translate(modelview, modelview, [3, 1.4, 0]);
+        mat4.translate(modelview, modelview, [1.2, 1.4, 0]);
         mat4.scale(modelview, modelview, [0.15, 0.15, 0.15]);
-        setLightPosition(u_lights[0].position, modelview, [0, 0, 0, 1]);
+        setLightPosition(u_lights[1].position, modelview, [0, 0, 0, 1]);
         if (cyanLampOn) {
-            gl.uniform3f(u_material.emissiveColor, 0.1, 0.6, 0.6);
+            gl.uniform3f(u_material.emissiveColor, 0.1, 0.7, 0.7);
         } else {
             gl.uniform3f(u_material.emissiveColor, 0.2, 0.2, 0.2);      
         }
@@ -237,16 +237,19 @@ Notice the light only has 3 properties now -->
 
         // draw overhead light
         pushMatrix();
-        mat4.translate(modelview, modelview, [-5, 10, 5]);
-        mat4.scale(modelview, modelview, [0.25, 0.25, 0.25]);
-        setLightPosition(u_lights[2].position, modelview, [0, 0, 0, 1]);
-        if (overheadLightOn) {
-            gl.uniform3f(u_material.emissiveColor, 0.5, 0.5, 0.5);   
-        } else {
-            gl.uniform3f(u_material.emissiveColor, 0.1, 0.1, 0.1);
+        mat4.rotateZ(modelview,modelview,Math.PI/2);
+        mat4.translate(modelview,modelview,[6.5,0,0]);
+        mat4.scale(modelview,modelview,[0.4,0.4,0.4]);
+        if (overheadLightOn) { 
+            gl.uniform3f( u_material.emissiveColor, 0.7, 0.7, 0.7 );
+            setLightPosition(u_lights[2].position, modelview, [1,0,0,0]);
+        }
+        else { // dim light on even if the checkbox is unchecked
+            gl.uniform3f(u_material.emissiveColor, 0.1, 0.1, 0.1 );
+            setLightPosition(u_lights[2].position, modelview, [1,0,0,0]);
         }
         sphere.render();
-        gl.uniform3f(u_material.emissiveColor, 0, 0, 0);
+        gl.uniform3f( u_material.emissiveColor, 0, 0, 0 );
         popMatrix();
     }
 
@@ -265,17 +268,17 @@ Notice the light only has 3 properties now -->
     * Creates the World
     */
     function world() {
-        // ground
+        // light gray ground
         pushMatrix();
         mat4.translate(modelview,modelview,[0,-0.05,0]);
         mat4.rotate(modelview,modelview,(90)/180*Math.PI,[1,0,0]);
-        currentColor = [0.1,0.4,0.1,1];
+        currentColor = [0.7,0.7,0.7,1];
         disk.render();
         popMatrix();
 
-        // draw yellow lamp post
+        // draw red lamp post
         pushMatrix();
-        mat4.translate(modelview, modelview, [-3, 2.5, 0]);
+        mat4.translate(modelview, modelview, [-1.2, 2.5, 0]);
         mat4.rotate(modelview, modelview, (90) / 180 * Math.PI, [1, 0, 0]);
         mat4.scale(modelview, modelview, [0.15, 0.15, 1.25]);
         currentColor = [0.5, 0.5, 0.5, 1];
@@ -284,7 +287,7 @@ Notice the light only has 3 properties now -->
 
         // draw cyan lamp post
         pushMatrix();
-        mat4.translate(modelview, modelview, [3, 2.5, 0]);
+        mat4.translate(modelview, modelview, [1.2, 2.5, 0]);
         mat4.rotate(modelview, modelview, (90) / 180 * Math.PI, [1, 0, 0]);
         mat4.scale(modelview, modelview, [0.15, 0.15, 1.25]);
         currentColor = [0.5, 0.5, 0.5, 1];
@@ -298,18 +301,39 @@ Notice the light only has 3 properties now -->
         mat4.scale(modelview,modelview,[0.5,0.5,0.5]);
         box();
         popMatrix();
+
+        // cone
+        pushMatrix();
+        mat4.rotate(modelview,modelview,(frameNumber)/180*Math.PI,[ 0, 1, 0]);
+        mat4.translate(modelview,modelview,[1,0,1]);
+        mat4.scale(modelview,modelview,[0.7,0.7,0.7]);
+        coneObj();
+        popMatrix();
     }
 
     /**
-    * Creates the box
+    * Creates a white box
     */
     function box() {
         pushMatrix();
         mat4.translate(modelview, modelview, [1, 0.375, 1]);
         mat4.rotate(modelview, modelview, (90) / 180 * Math.PI, [1, 0, 0]);
         mat4.scale(modelview, modelview, [1.2, 1.2, 1.2]);
-        currentColor = [0.9, 0.9, 0.9, 1];
+        currentColor = [0.95, 0.95, 0.95, 1];
         cube.render();
+        popMatrix();
+    }
+
+    /**
+    * Creates a blue cone
+    */
+    function coneObj() {
+        pushMatrix();
+        mat4.translate(modelview,modelview,[-3,0,1.5]);
+        mat4.rotate(modelview,modelview,(90)/180*Math.PI,[-1,0,0]);
+        mat4.scale(modelview,modelview,[1,1,1.5]);
+        currentColor = [0,0,0.8,1];
+        cone.render();
         popMatrix();
     }
 
@@ -520,17 +544,17 @@ Notice the light only has 3 properties now -->
     }
 
     function handleOverheadCheckbox() {
-        overheadLightOn = !overheadLightOn;
+        overheadLightOn = document.getElementById("overheadLightCheck").checked;
         draw();
     }
 
-    function handleYellowLampCheckbox() {
-        yellowLampOn = !yellowLampOn;
+    function handleRedLampCheckbox() {
+        redLampOn = document.getElementById("redLampCheck").checked;
         draw();
     }
 
     function handleCyanLampCheckbox() {
-        cyanLampOn = !cyanLampOn;
+        cyanLampOn = document.getElementById("cyanLampCheck").checked;
         draw();
     }
 
@@ -563,10 +587,10 @@ Notice the light only has 3 properties now -->
             return;
         }
         document.getElementById("overheadLightCheck").checked = true;
-        document.getElementById("yellowLampCheck").checked = true;
+        document.getElementById("redLampCheck").checked = true;
         document.getElementById("cyanLampCheck").checked = true;
         document.getElementById("overheadLightCheck").onclick = handleOverheadCheckbox;
-        document.getElementById("yellowLampCheck").onclick = handleYellowLampCheckbox;
+        document.getElementById("redLampCheck").onclick = handleRedLampCheckbox;
         document.getElementById("cyanLampCheck").onclick = handleCyanLampCheckbox;
         document.getElementById("animCheck").checked = false;
         document.getElementById("reset").onclick = function () {
@@ -574,6 +598,12 @@ Notice the light only has 3 properties now -->
             frameNumber = 0;
             animating = false;
             document.getElementById("animCheck").checked = false;
+            overheadLightOn = true;
+            document.getElementById("overheadLightCheck").checked = true;
+            redLampOn = true;
+            document.getElementById("redLampCheck").checked = true;
+            cyanLampOn = true;
+            document.getElementById("cyanLampCheck").checked = true;
             draw();
         }
 
@@ -616,7 +646,7 @@ Notice the light only has 3 properties now -->
     <p>
         <label><input type="checkbox" id="animCheck" onchange="setAnimating(this.checked)">Animate</label>
         <label><input type="checkbox" id="overheadLightCheck">Overhead Light</label>
-        <label><input type="checkbox" id="yellowLampCheck">Yellow Lamp</label>
+        <label><input type="checkbox" id="redLampCheck">Red Lamp</label>
         <label><input type="checkbox" id="cyanLampCheck">Cyan Lamp</label>
         <button id="reset" style="margin-left:40px">Reset</button>
     </p>
