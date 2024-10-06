@@ -296,18 +296,26 @@ Notice the light only has 3 properties now -->
 
         // box
         pushMatrix();
-        mat4.rotate(modelview,modelview,(-frameNumber)/180*Math.PI,[ 0, 1, 0]);
-        mat4.translate(modelview,modelview,[0,0.3,4]);
-        mat4.scale(modelview,modelview,[0.5,0.5,0.5]);
+        mat4.rotate(modelview,modelview,(-frameNumber)/270*Math.PI,[ 0, 1, 0]);
+        mat4.translate(modelview,modelview,[0,0.3,5]);
+        mat4.scale(modelview,modelview,[0.7,0.7,0.7]);
         box();
         popMatrix();
 
         // cone
         pushMatrix();
-        mat4.rotate(modelview,modelview,(frameNumber)/180*Math.PI,[ 0, 1, 0]);
+        mat4.rotate(modelview,modelview,(frameNumber)/270*Math.PI,[ 0, 1, 0]);
         mat4.translate(modelview,modelview,[1,0,1]);
         mat4.scale(modelview,modelview,[0.7,0.7,0.7]);
         coneObj();
+        popMatrix();
+
+        // cylinder
+        pushMatrix();
+        mat4.rotate(modelview,modelview,(frameNumber)/180*Math.PI,[ 0, 1, 0]);
+        mat4.translate(modelview,modelview,[1.5,0,1.2]);
+        mat4.scale(modelview,modelview,[0.7,0.7,0.7]);
+        cylinderObj();
         popMatrix();
     }
 
@@ -334,6 +342,19 @@ Notice the light only has 3 properties now -->
         mat4.scale(modelview,modelview,[1,1,1.5]);
         currentColor = [0,0,0.8,1];
         cone.render();
+        popMatrix();
+    }
+
+    /**
+    * Creates an orange cylinder
+    */
+    function cylinderObj() {
+        pushMatrix();
+        mat4.translate(modelview,modelview,[-5,-1.5,3.5]);
+        mat4.rotate(modelview,modelview,(90)/180*Math.PI,[-1,0,0]);
+        mat4.scale(modelview,modelview,[1,1,1.5]);
+        currentColor = [0.8,0.4,0,1];
+        cylinder.render();
         popMatrix();
     }
 
