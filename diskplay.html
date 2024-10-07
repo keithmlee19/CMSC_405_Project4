@@ -317,6 +317,14 @@ Notice the light only has 3 properties now -->
         mat4.scale(modelview,modelview,[0.7,0.7,0.7]);
         cylinderObj();
         popMatrix();
+
+        // sphere
+        pushMatrix();
+        mat4.rotate(modelview,modelview,(frameNumber)/135*Math.PI,[ 0, 1, 0]);
+        mat4.translate(modelview,modelview,[3,1,3]);
+        mat4.scale(modelview,modelview,[0.3,0.3,0.3]);
+        sphereObj();
+        popMatrix();
     }
 
     /**
@@ -355,6 +363,19 @@ Notice the light only has 3 properties now -->
         mat4.scale(modelview,modelview,[1,1,1.5]);
         currentColor = [0.8,0.4,0,1];
         cylinder.render();
+        popMatrix();
+    }
+
+    /**
+    * Creates a dark gray sphere
+    */
+    function sphereObj() {
+        pushMatrix();
+        mat4.translate(modelview,modelview,[-5,-1.5,3.5]);
+        mat4.rotate(modelview,modelview,(90)/180*Math.PI,[-1,0,0]);
+        mat4.scale(modelview,modelview,[1,1,1]);
+        currentColor = [0.2,0.2,0,2];
+        sphere.render();
         popMatrix();
     }
 
