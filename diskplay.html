@@ -250,6 +250,7 @@ Notice the light only has 3 properties now -->
         }
         sphere.render();
         gl.uniform3f( u_material.emissiveColor, 0, 0, 0 );
+        gl.uniform3f( u_material.specularColor, 0.7, 0.7, 0.7 );
         popMatrix();
     }
 
